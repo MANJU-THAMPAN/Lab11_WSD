@@ -12,8 +12,8 @@ function ToDolist() {
   const [tasks, setTasks] = useState([])
   const [show, setShow] = useState(false);
   const [showE, setShowE] = useState(false);
-  const [filteredTasks,setFilteredTasks] = useState([])
- 
+  const [editIndex,setEditIndex] = useState(null)
+
 
   // validate
   const validate = () => {
@@ -30,33 +30,33 @@ function ToDolist() {
   const handleShow = () => setShow(true);
 
   const handleCloseE = () => setShowE(false);
-  const handleShowE = (i) => {setShowE(true)};
+  const handleShowE = (i) => { 
+    setShowE(true) 
+    setEditIndex(i)
+  };
 
   // addtask
   const addTask = (taskInput) => {
     setNewTask(taskInput)
     setTasks([taskInput, ...tasks])
-    setFilteredTasks([taskInput,...tasks])
   }
 
   // deletTask
   const deletTask = (value) => {
-   const del = filteredTasks.filter(item => item !== value)
-   setFilteredTasks(del)
-   setTasks(del)
+    console.log("index at delete",value)
+    const del = tasks.slice(0, value).concat(tasks.slice(value + 1));
+    setTasks(del)
   }
-  // // editTask
-  // const editTask = (index) => {
-  //   handleShowE();
-    
-  //   var taskInputE = document.getElementById('taskInputE').value;
-  //   if (!taskInputE) {
-  //     window.alert("Can't leave it blank")
-  //   } else {
-      
-  //     handleCloseE()
-  //   }
-  // }
+  // editTask
+  const editTask = () => {
+    var taskInputE = document.getElementById('taskInputE').value;
+    if (!taskInputE) {
+      window.alert("Can't leave it blank")
+    } else {
+      tasks[editIndex] = taskInputE;
+      handleCloseE()
+    }
+  }
 
   return (
     <>
@@ -73,8 +73,8 @@ function ToDolist() {
               <li className='li' key={i}>
                 <div className='liText'>{d}</div>
                 <div className='liIcon'>
-                  <button  onClick={handleShowE} ><FontAwesomeIcon icon={faPenToSquare} /></button>
-                  <button onClick={e=>deletTask(d)}> <FontAwesomeIcon icon={faTrash} /></button>
+                  <button id='edit' onClick={()=>handleShowE(i)} ><FontAwesomeIcon icon={faPenToSquare} /></button>
+                  <button onClick={e=>deletTask(i)}> <FontAwesomeIcon icon={faTrash} /></button>
                 </div>
               </li>
             ))
@@ -108,12 +108,12 @@ function ToDolist() {
           <button className='modalClose' variant="secondary" onClick={handleCloseE}>
             Close
           </button>
-          <button className='modalOpen' variant="primary" onClick={validate}>
+          <button className='modalOpen' variant="primary" onClick={editTask}>
             Save Changes
           </button>
         </Modal.Footer>
       </Modal>
-      
+
     </>
   )
 }
